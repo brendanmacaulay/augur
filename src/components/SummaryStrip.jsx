@@ -1,11 +1,11 @@
-import { BANDS, inherentScore, scoreBand } from '../constants/risks'
+import { BANDS, EXPOSURE, exposureScore, scoreBand } from '../constants/risks'
 
-// Four cards counting risks per severity band (Critical → Low), based on
-// inherent scores. Recomputes from the risks prop, so it stays live.
-export default function SummaryStrip({ risks }) {
+// Four cards counting risks per severity band (Critical → Low), based on the
+// active exposure's score. Recomputes from props, so it stays live.
+export default function SummaryStrip({ risks, exposure = EXPOSURE.INHERENT }) {
   const counts = Object.fromEntries(BANDS.map((band) => [band.name, 0]))
   for (const risk of risks) {
-    const band = scoreBand(inherentScore(risk.likelihood, risk.impact))
+    const band = scoreBand(exposureScore(risk, exposure))
     counts[band.name] += 1
   }
 

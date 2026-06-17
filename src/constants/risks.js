@@ -33,9 +33,35 @@ export const IMPACT_LABELS = {
   5: 'Catastrophic',
 }
 
+// Exposure modes for the dashboard. Inherent uses a risk's raw likelihood
+// and impact; Residual uses the residual_* fields, falling back to the
+// inherent value per-axis when controls have not been assessed yet.
+export const EXPOSURE = { INHERENT: 'Inherent', RESIDUAL: 'Residual' }
+export const EXPOSURES = [EXPOSURE.INHERENT, EXPOSURE.RESIDUAL]
+
 // Inherent score is likelihood x impact (range 1-25).
 export function inherentScore(likelihood, impact) {
   return (Number(likelihood) || 0) * (Number(impact) || 0)
+}
+
+// The (likelihood, impact) a risk occupies in the given exposure mode.
+// Residual falls back to the inherent value on each axis when unset, i.e.
+// "no controls assessed yet, so residual equals inherent".
+export function exposurePosition(risk, mode) {
+  if (mode === EXPOSURE.RESIDUAL) {
+    return {
+      likelihood: risk.residual_likelihood ?? risk.likelihood,
+      impact: risk.residual_impact ?? risk.impact,
+    }
+  }
+  return { likelihood: risk.likelihood, impact: risk.impact }
+}
+
+// Severity score (likelihood x impact) for a risk in the given exposure mode,
+// reusing the shared inherentScore so both modes score identically.
+export function exposureScore(risk, mode) {
+  const { likelihood, impact } = exposurePosition(risk, mode)
+  return inherentScore(likelihood, impact)
 }
 
 // Severity bands, ordered highest-first. Each band carries the Tailwind

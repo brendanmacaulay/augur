@@ -1,9 +1,11 @@
 import {
   BANDS,
   SCALE,
+  EXPOSURE,
   LIKELIHOOD_LABELS,
   IMPACT_LABELS,
   inherentScore,
+  exposurePosition,
   scoreBand,
 } from '../constants/risks'
 
@@ -13,12 +15,18 @@ const IMPACTS_TOP_DOWN = [...SCALE].reverse()
 // Legend reads low → critical for a natural severity ramp.
 const LEGEND = [...BANDS].reverse()
 
-export default function RiskHeatMap({ risks, selectedCell, onSelectCell }) {
-  // Tally how many risks sit in each (likelihood, impact) cell.
+export default function RiskHeatMap({
+  risks,
+  exposure = EXPOSURE.INHERENT,
+  selectedCell,
+  onSelectCell,
+}) {
+  // Tally how many risks sit in each cell, by their position in the active
+  // exposure mode (residual falls back to inherent per-axis).
   const counts = {}
   for (const risk of risks) {
-    const key = `${risk.likelihood}-${risk.impact}`
-    counts[key] = (counts[key] ?? 0) + 1
+    const { likelihood, impact } = exposurePosition(risk, exposure)
+    counts[`${likelihood}-${impact}`] = (counts[`${likelihood}-${impact}`] ?? 0) + 1
   }
 
   const isSelected = (likelihood, impact) =>

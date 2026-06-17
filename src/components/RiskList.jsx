@@ -1,4 +1,23 @@
-import { inherentScore, scoreBadgeClass, statusBadgeClass } from '../constants/risks'
+import {
+  EXPOSURE,
+  inherentScore,
+  exposureScore,
+  scoreBadgeClass,
+  statusBadgeClass,
+} from '../constants/risks'
+
+// A coloured severity-score badge, shared by the inherent and residual columns.
+function ScoreBadge({ score }) {
+  return (
+    <span
+      className={`inline-flex min-w-[2rem] justify-center rounded-full px-2 py-0.5 text-xs font-semibold ${scoreBadgeClass(
+        score
+      )}`}
+    >
+      {score}
+    </span>
+  )
+}
 
 export default function RiskList({
   risks,
@@ -33,14 +52,16 @@ export default function RiskList({
             <th className="px-4 py-3">Category</th>
             <th className="px-4 py-3 text-center">L</th>
             <th className="px-4 py-3 text-center">I</th>
-            <th className="px-4 py-3 text-center">Score</th>
+            <th className="px-4 py-3 text-center">Inherent</th>
+            <th className="px-4 py-3 text-center">Residual</th>
             <th className="px-4 py-3">Status</th>
             <th className="px-4 py-3 text-right">Actions</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-100">
           {risks.map((risk) => {
-            const score = inherentScore(risk.likelihood, risk.impact)
+            const inherent = inherentScore(risk.likelihood, risk.impact)
+            const residual = exposureScore(risk, EXPOSURE.RESIDUAL)
             const isEditing = risk.id === editingId
             return (
               <tr
@@ -61,13 +82,10 @@ export default function RiskList({
                   {risk.impact}
                 </td>
                 <td className="px-4 py-3 text-center">
-                  <span
-                    className={`inline-flex min-w-[2rem] justify-center rounded-full px-2 py-0.5 text-xs font-semibold ${scoreBadgeClass(
-                      score
-                    )}`}
-                  >
-                    {score}
-                  </span>
+                  <ScoreBadge score={inherent} />
+                </td>
+                <td className="px-4 py-3 text-center">
+                  <ScoreBadge score={residual} />
                 </td>
                 <td className="px-4 py-3">
                   <span

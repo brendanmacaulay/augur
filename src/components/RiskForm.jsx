@@ -168,6 +168,11 @@ export default function RiskForm({
         </div>
       </div>
 
+      <p className="-mt-2 text-xs text-slate-500">
+        Leave residual blank if no controls have been applied yet — residual then
+        equals inherent.
+      </p>
+
       <div>
         <label htmlFor="mitigation" className={labelClass}>
           Mitigation

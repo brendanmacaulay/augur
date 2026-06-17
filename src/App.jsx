@@ -3,7 +3,8 @@ import RiskForm from './components/RiskForm'
 import RiskList from './components/RiskList'
 import RiskHeatMap from './components/RiskHeatMap'
 import SummaryStrip from './components/SummaryStrip'
-import { CATEGORIES, STATUSES } from './constants/risks'
+import ExposureToggle from './components/ExposureToggle'
+import { CATEGORIES, STATUSES, EXPOSURE, exposurePosition } from './constants/risks'
 import { listRisks, createRisk, updateRisk, deleteRisk } from './services/risks'
 
 const EMPTY_FORM = {
@@ -41,6 +42,7 @@ function App() {
   const [risks, setRisks] = useState([])
   const [form, setForm] = useState(EMPTY_FORM)
   const [editingId, setEditingId] = useState(null)
+  const [exposure, setExposure] = useState(EXPOSURE.INHERENT)
   const [selectedCell, setSelectedCell] = useState(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -94,6 +96,12 @@ function App() {
         ? null
         : { likelihood, impact }
     )
+  }
+
+  // Switching exposure repaints the matrix, so any cell filter is cleared.
+  function handleExposureChange(mode) {
+    setExposure(mode)
+    setSelectedCell(null)
   }
 
   async function handleSubmit(e) {
@@ -150,13 +158,16 @@ function App() {
     }
   }
 
-  // The register reflects the active heat-map cell filter, if any.
+  // The register reflects the active heat-map cell filter, if any, matching
+  // each risk by its position in the active exposure mode.
   const visibleRisks = selectedCell
-    ? risks.filter(
-        (r) =>
-          r.likelihood === selectedCell.likelihood &&
-          r.impact === selectedCell.impact
-      )
+    ? risks.filter((r) => {
+        const pos = exposurePosition(r, exposure)
+        return (
+          pos.likelihood === selectedCell.likelihood &&
+          pos.impact === selectedCell.impact
+        )
+      })
     : risks
 
   return (
@@ -177,17 +188,21 @@ function App() {
 
         {/* Dashboard: live severity summary + heat map */}
         <section className="mb-8 space-y-6">
-          <SummaryStrip risks={risks} />
+          <SummaryStrip risks={risks} exposure={exposure} />
 
           <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-            <div className="mb-5 flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-slate-900">Risk heat map</h2>
-              <span className="text-sm text-slate-500">
-                Inherent severity (likelihood × impact)
-              </span>
+            <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h2 className="text-lg font-semibold text-slate-900">Risk heat map</h2>
+                <p className="text-sm text-slate-500">
+                  {exposure} exposure · likelihood × impact
+                </p>
+              </div>
+              <ExposureToggle value={exposure} onChange={handleExposureChange} />
             </div>
             <RiskHeatMap
               risks={risks}
+              exposure={exposure}
               selectedCell={selectedCell}
               onSelectCell={handleSelectCell}
             />
@@ -224,7 +239,8 @@ function App() {
                 Showing <span className="font-semibold">{visibleRisks.length}</span>{' '}
                 {visibleRisks.length === 1 ? 'risk' : 'risks'} at Likelihood{' '}
                 <span className="font-semibold">{selectedCell.likelihood}</span> ×
-                Impact <span className="font-semibold">{selectedCell.impact}</span>
+                Impact <span className="font-semibold">{selectedCell.impact}</span>{' '}
+                · {exposure} exposure
               </span>
               <button
                 type="button"
