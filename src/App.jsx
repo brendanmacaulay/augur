@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState } from 'react'
 import RiskForm from './components/RiskForm'
 import RiskList from './components/RiskList'
+import RiskHeatMap from './components/RiskHeatMap'
+import SummaryStrip from './components/SummaryStrip'
 import { CATEGORIES, STATUSES } from './constants/risks'
 import { listRisks, createRisk, updateRisk, deleteRisk } from './services/risks'
 
@@ -39,6 +41,7 @@ function App() {
   const [risks, setRisks] = useState([])
   const [form, setForm] = useState(EMPTY_FORM)
   const [editingId, setEditingId] = useState(null)
+  const [selectedCell, setSelectedCell] = useState(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
@@ -82,6 +85,15 @@ function App() {
 
   function handleChange(name, value) {
     setForm((prev) => ({ ...prev, [name]: value }))
+  }
+
+  // Toggle the heat-map cell filter; clicking the active cell clears it.
+  function handleSelectCell(likelihood, impact) {
+    setSelectedCell((prev) =>
+      prev && prev.likelihood === likelihood && prev.impact === impact
+        ? null
+        : { likelihood, impact }
+    )
   }
 
   async function handleSubmit(e) {
@@ -138,6 +150,15 @@ function App() {
     }
   }
 
+  // The register reflects the active heat-map cell filter, if any.
+  const visibleRisks = selectedCell
+    ? risks.filter(
+        (r) =>
+          r.likelihood === selectedCell.likelihood &&
+          r.impact === selectedCell.impact
+      )
+    : risks
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
       <div className="mx-auto max-w-5xl px-4 py-10">
@@ -154,7 +175,27 @@ function App() {
           </div>
         )}
 
-        <section className="mb-10 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+        {/* Dashboard: live severity summary + heat map */}
+        <section className="mb-8 space-y-6">
+          <SummaryStrip risks={risks} />
+
+          <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+            <div className="mb-5 flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-slate-900">Risk heat map</h2>
+              <span className="text-sm text-slate-500">
+                Inherent severity (likelihood × impact)
+              </span>
+            </div>
+            <RiskHeatMap
+              risks={risks}
+              selectedCell={selectedCell}
+              onSelectCell={handleSelectCell}
+            />
+          </div>
+        </section>
+
+        {/* Add / edit form */}
+        <section className="mb-8 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
           <h2 className="mb-4 text-lg font-semibold text-slate-900">
             {editingId ? 'Edit risk' : 'Add a risk'}
           </h2>
@@ -168,6 +209,7 @@ function App() {
           />
         </section>
 
+        {/* Register */}
         <section className="rounded-xl border border-slate-200 bg-white shadow-sm">
           <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
             <h2 className="text-lg font-semibold text-slate-900">Risk register</h2>
@@ -175,12 +217,36 @@ function App() {
               {risks.length} {risks.length === 1 ? 'risk' : 'risks'}
             </span>
           </div>
+
+          {selectedCell && (
+            <div className="flex items-center justify-between gap-3 border-b border-slate-200 bg-indigo-50 px-6 py-3 text-sm">
+              <span className="text-slate-700">
+                Showing <span className="font-semibold">{visibleRisks.length}</span>{' '}
+                {visibleRisks.length === 1 ? 'risk' : 'risks'} at Likelihood{' '}
+                <span className="font-semibold">{selectedCell.likelihood}</span> ×
+                Impact <span className="font-semibold">{selectedCell.impact}</span>
+              </span>
+              <button
+                type="button"
+                onClick={() => setSelectedCell(null)}
+                className="shrink-0 rounded-md border border-slate-300 bg-white px-3 py-1 text-xs font-medium text-slate-700 hover:bg-slate-50"
+              >
+                Clear
+              </button>
+            </div>
+          )}
+
           <RiskList
-            risks={risks}
+            risks={visibleRisks}
             loading={loading}
             editingId={editingId}
             onEdit={handleEdit}
             onDelete={handleDelete}
+            emptyMessage={
+              selectedCell
+                ? 'No risks in this cell.'
+                : 'No risks yet. Add your first one above.'
+            }
           />
         </section>
       </div>

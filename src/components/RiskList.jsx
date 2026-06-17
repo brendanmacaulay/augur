@@ -1,6 +1,13 @@
 import { inherentScore, scoreBadgeClass, statusBadgeClass } from '../constants/risks'
 
-export default function RiskList({ risks, loading, editingId, onEdit, onDelete }) {
+export default function RiskList({
+  risks,
+  loading,
+  editingId,
+  onEdit,
+  onDelete,
+  emptyMessage = 'No risks yet. Add your first one above.',
+}) {
   if (loading) {
     return (
       <p className="px-6 py-10 text-center text-sm text-slate-500">
@@ -12,7 +19,7 @@ export default function RiskList({ risks, loading, editingId, onEdit, onDelete }
   if (risks.length === 0) {
     return (
       <p className="px-6 py-10 text-center text-sm text-slate-500">
-        No risks yet. Add your first one above.
+        {emptyMessage}
       </p>
     )
   }
