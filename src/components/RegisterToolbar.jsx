@@ -9,9 +9,9 @@ const SORT_OPTIONS = [
 const selectClass =
   'rounded-md border border-slate-300 bg-white px-2 py-1.5 text-sm text-slate-900 shadow-sm ' +
   'focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ' +
-  'dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100'
+  'dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100'
 const labelClass =
-  'text-[11px] font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400'
+  'text-[11px] font-medium uppercase tracking-wide text-slate-500 dark:text-neutral-400'
 
 function Field({ label, children }) {
   return (
@@ -34,7 +34,7 @@ export default function RegisterToolbar({
   filtersActive,
 }) {
   return (
-    <div className="flex flex-wrap items-end gap-3 border-b border-slate-200 px-6 py-4 dark:border-slate-800">
+    <div className="flex flex-wrap items-end gap-3 border-b border-slate-200 px-6 py-4 dark:border-neutral-800">
       <Field label="Category">
         <select
           value={category}
@@ -98,7 +98,7 @@ export default function RegisterToolbar({
         <button
           type="button"
           onClick={onReset}
-          className="ml-auto rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+          className="ml-auto rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
         >
           Reset filters
         </button>

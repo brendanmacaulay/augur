@@ -42,18 +42,18 @@ export default function DraftWithAI({ onDraft }) {
   }
 
   return (
-    <div className="mb-6 rounded-lg border border-indigo-200 bg-indigo-50/60 p-4 dark:border-indigo-900/60 dark:bg-indigo-950/30">
+    <div className="mb-6 rounded-lg border border-indigo-200 bg-indigo-50/60 p-4 dark:border-neutral-800 dark:bg-neutral-900">
       <div className="flex items-center gap-2">
-        <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+        <h3 className="text-sm font-semibold text-slate-900 dark:text-neutral-100">
           Draft with AI
         </h3>
         <span className="rounded-full bg-indigo-100 px-2 py-0.5 text-[11px] font-medium text-indigo-700 dark:bg-indigo-900/60 dark:text-indigo-300">
           Beta
         </span>
       </div>
-      <p className="mt-1 text-xs text-slate-600 dark:text-slate-400">
+      <p className="mt-1 text-xs text-slate-600 dark:text-neutral-400">
         Describe a risk in plain English and let AI draft the entry.{' '}
-        <span className="font-medium text-slate-700 dark:text-slate-300">
+        <span className="font-medium text-slate-700 dark:text-neutral-300">
           Review and edit before saving.
         </span>
       </p>
@@ -63,7 +63,7 @@ export default function DraftWithAI({ onDraft }) {
         value={text}
         onChange={(e) => setText(e.target.value)}
         placeholder="e.g. Our main payment provider could suffer an outage during peak sales, blocking customer checkout."
-        className="mt-3 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+        className="mt-3 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
       />
 
       {error && <p className="mt-2 text-xs text-rose-600 dark:text-rose-400">{error}</p>}

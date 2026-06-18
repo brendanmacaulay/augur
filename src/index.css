@@ -19,6 +19,6 @@ body {
 }
 
 .dark body {
-  background-color: var(--color-slate-950);
-  color: var(--color-slate-100);
+  background-color: var(--color-neutral-950);
+  color: var(--color-neutral-100);
 }

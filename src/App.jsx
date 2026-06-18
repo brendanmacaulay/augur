@@ -238,17 +238,17 @@ function App() {
   const narrowed = selectedCell != null || visibleRisks.length !== risks.length
 
   const cardClass =
-    'rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900'
+    'rounded-xl border border-slate-200 bg-white shadow-sm dark:border-neutral-800 dark:bg-neutral-900'
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
+    <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-neutral-950 dark:text-neutral-100">
       <div className="mx-auto max-w-5xl px-4 py-10">
         <header className="mb-8 flex items-start justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
+            <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-neutral-100">
               Augur
             </h1>
-            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+            <p className="mt-1 text-sm text-slate-500 dark:text-neutral-400">
               An AI-native enterprise risk register — surface, score, and track exposure.
             </p>
           </div>
@@ -268,10 +268,10 @@ function App() {
           <div className={`${cardClass} p-6`}>
             <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
               <div>
-                <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+                <h2 className="text-lg font-semibold text-slate-900 dark:text-neutral-100">
                   Risk heat map
                 </h2>
-                <p className="text-sm text-slate-500 dark:text-slate-400">
+                <p className="text-sm text-slate-500 dark:text-neutral-400">
                   {exposure} exposure · likelihood × impact
                 </p>
               </div>
@@ -289,7 +289,7 @@ function App() {
         {/* Add / edit form */}
         <section className={`mb-8 ${cardClass} p-6`}>
           <DraftWithAI onDraft={handleDraft} />
-          <h2 className="mb-4 text-lg font-semibold text-slate-900 dark:text-slate-100">
+          <h2 className="mb-4 text-lg font-semibold text-slate-900 dark:text-neutral-100">
             {editingId ? 'Edit risk' : 'Add a risk'}
           </h2>
           <RiskForm
@@ -305,11 +305,11 @@ function App() {
 
         {/* Register */}
         <section className={cardClass}>
-          <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4 dark:border-slate-800">
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+          <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4 dark:border-neutral-800">
+            <h2 className="text-lg font-semibold text-slate-900 dark:text-neutral-100">
               Risk register
             </h2>
-            <span className="text-sm text-slate-500 dark:text-slate-400">
+            <span className="text-sm text-slate-500 dark:text-neutral-400">
               {narrowed
                 ? `${visibleRisks.length} of ${risks.length}`
                 : `${risks.length} ${risks.length === 1 ? 'risk' : 'risks'}`}
@@ -327,8 +327,8 @@ function App() {
           />
 
           {selectedCell && (
-            <div className="flex items-center justify-between gap-3 border-b border-slate-200 bg-indigo-50 px-6 py-3 text-sm dark:border-slate-800 dark:bg-indigo-950/40">
-              <span className="text-slate-700 dark:text-slate-300">
+            <div className="flex items-center justify-between gap-3 border-b border-slate-200 bg-indigo-50 px-6 py-3 text-sm dark:border-neutral-800 dark:bg-indigo-950/40">
+              <span className="text-slate-700 dark:text-neutral-300">
                 Showing <span className="font-semibold">{visibleRisks.length}</span>{' '}
                 {visibleRisks.length === 1 ? 'risk' : 'risks'} at Likelihood{' '}
                 <span className="font-semibold">{selectedCell.likelihood}</span> ×
@@ -338,7 +338,7 @@ function App() {
               <button
                 type="button"
                 onClick={() => setSelectedCell(null)}
-                className="shrink-0 rounded-md border border-slate-300 bg-white px-3 py-1 text-xs font-medium text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+                className="shrink-0 rounded-md border border-slate-300 bg-white px-3 py-1 text-xs font-medium text-slate-700 hover:bg-slate-50 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
               >
                 Clear
               </button>

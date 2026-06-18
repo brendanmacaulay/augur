@@ -39,7 +39,7 @@ export default function RiskHeatMap({
       <div className="flex">
         {/* Y-axis title */}
         <div className="flex w-6 items-center justify-center">
-          <span className="-rotate-90 whitespace-nowrap text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+          <span className="-rotate-90 whitespace-nowrap text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-neutral-400">
             Impact
           </span>
         </div>
@@ -49,10 +49,10 @@ export default function RiskHeatMap({
           {IMPACTS_TOP_DOWN.map((impact) => (
             <div key={impact} className="flex items-stretch">
               <div className="flex w-24 shrink-0 flex-col justify-center pr-2 text-right sm:w-28">
-                <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                <span className="text-sm font-semibold text-slate-700 dark:text-neutral-300">
                   {impact}
                 </span>
-                <span className="text-[11px] leading-tight text-slate-500 dark:text-slate-400">
+                <span className="text-[11px] leading-tight text-slate-500 dark:text-neutral-400">
                   {IMPACT_LABELS[impact]}
                 </span>
               </div>
@@ -80,7 +80,7 @@ export default function RiskHeatMap({
                     }`}
                   >
                     {count > 0 && (
-                      <span className="flex h-8 min-w-[2rem] items-center justify-center rounded-full bg-white/85 px-2 text-sm font-bold text-slate-900 shadow-sm dark:bg-slate-950/80 dark:text-slate-50">
+                      <span className="flex h-8 min-w-[2rem] items-center justify-center rounded-full bg-white/85 px-2 text-sm font-bold text-slate-900 shadow-sm dark:bg-neutral-950/80 dark:text-neutral-50">
                         {count}
                       </span>
                     )}
@@ -98,10 +98,10 @@ export default function RiskHeatMap({
                 key={likelihood}
                 className="m-0.5 flex flex-1 flex-col items-center text-center"
               >
-                <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                <span className="text-sm font-semibold text-slate-700 dark:text-neutral-300">
                   {likelihood}
                 </span>
-                <span className="text-[11px] leading-tight text-slate-500 dark:text-slate-400">
+                <span className="text-[11px] leading-tight text-slate-500 dark:text-neutral-400">
                   {LIKELIHOOD_LABELS[likelihood]}
                 </span>
               </div>
@@ -109,7 +109,7 @@ export default function RiskHeatMap({
           </div>
 
           {/* X-axis title */}
-          <div className="mt-2 text-center text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+          <div className="mt-2 text-center text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-neutral-400">
             Likelihood
           </div>
         </div>
@@ -120,9 +120,9 @@ export default function RiskHeatMap({
         {LEGEND.map((band) => (
           <div key={band.name} className="flex items-center gap-2">
             <span className={`h-4 w-4 rounded ${band.swatch}`} />
-            <span className="text-sm text-slate-700 dark:text-slate-300">
+            <span className="text-sm text-slate-700 dark:text-neutral-300">
               <span className="font-medium">{band.name}</span>{' '}
-              <span className="text-slate-400 dark:text-slate-500">
+              <span className="text-slate-400 dark:text-neutral-500">
                 ({band.range})
               </span>
             </span>

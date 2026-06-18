@@ -25,7 +25,7 @@ function ExposureDelta({ inherent, residual }) {
   if (delta === 0) {
     return (
       <span
-        className="text-[11px] text-slate-400 dark:text-slate-500"
+        className="text-[11px] text-slate-400 dark:text-neutral-500"
         title="Residual equals inherent — no control effect"
       >
         no change
@@ -64,7 +64,7 @@ export default function RiskList({
 }) {
   if (loading) {
     return (
-      <p className="px-6 py-10 text-center text-sm text-slate-500 dark:text-slate-400">
+      <p className="px-6 py-10 text-center text-sm text-slate-500 dark:text-neutral-400">
         Loading risks…
       </p>
     )
@@ -72,7 +72,7 @@ export default function RiskList({
 
   if (risks.length === 0) {
     return (
-      <p className="px-6 py-10 text-center text-sm text-slate-500 dark:text-slate-400">
+      <p className="px-6 py-10 text-center text-sm text-slate-500 dark:text-neutral-400">
         {emptyMessage}
       </p>
     )
@@ -80,9 +80,9 @@ export default function RiskList({
 
   return (
     <div className="overflow-x-auto">
-      <table className="min-w-full divide-y divide-slate-200 text-sm dark:divide-slate-800">
+      <table className="min-w-full divide-y divide-slate-200 text-sm dark:divide-neutral-800">
         <thead>
-          <tr className="bg-slate-50 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 dark:bg-slate-800/50 dark:text-slate-400">
+          <tr className="bg-slate-50 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 dark:bg-neutral-800/50 dark:text-neutral-400">
             <th className="px-4 py-3">Risk</th>
             <th className="px-4 py-3">Category</th>
             <th className="px-4 py-3 text-center">L</th>
@@ -93,7 +93,7 @@ export default function RiskList({
             <th className="px-4 py-3 text-right">Actions</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+        <tbody className="divide-y divide-slate-100 dark:divide-neutral-800">
           {risks.map((risk) => {
             const inherent = inherentScore(risk.likelihood, risk.impact)
             const residual = exposureScore(risk, EXPOSURE.RESIDUAL)
@@ -104,26 +104,26 @@ export default function RiskList({
                 className={
                   isEditing
                     ? 'bg-indigo-50 dark:bg-indigo-950/40'
-                    : 'hover:bg-slate-50 dark:hover:bg-slate-800/50'
+                    : 'hover:bg-slate-50 dark:hover:bg-neutral-800/50'
                 }
               >
                 <td className="px-4 py-3">
-                  <div className="font-medium text-slate-900 dark:text-slate-100">
+                  <div className="font-medium text-slate-900 dark:text-neutral-100">
                     {risk.title}
                   </div>
                   {risk.owner && (
-                    <div className="text-xs text-slate-500 dark:text-slate-400">
+                    <div className="text-xs text-slate-500 dark:text-neutral-400">
                       Owner: {risk.owner}
                     </div>
                   )}
                 </td>
-                <td className="px-4 py-3 text-slate-700 dark:text-slate-300">
+                <td className="px-4 py-3 text-slate-700 dark:text-neutral-300">
                   {risk.category}
                 </td>
-                <td className="px-4 py-3 text-center text-slate-700 dark:text-slate-300">
+                <td className="px-4 py-3 text-center text-slate-700 dark:text-neutral-300">
                   {risk.likelihood}
                 </td>
-                <td className="px-4 py-3 text-center text-slate-700 dark:text-slate-300">
+                <td className="px-4 py-3 text-center text-slate-700 dark:text-neutral-300">
                   {risk.impact}
                 </td>
                 <td className="px-4 py-3 text-center">
@@ -148,13 +148,13 @@ export default function RiskList({
                   <div className="flex justify-end gap-2">
                     <button
                       onClick={() => onEdit(risk)}
-                      className={`${actionButtonClass} border-slate-300 bg-white text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700`}
+                      className={`${actionButtonClass} border-slate-300 bg-white text-slate-700 hover:bg-slate-50 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700`}
                     >
                       Edit
                     </button>
                     <button
                       onClick={() => onDelete(risk)}
-                      className={`${actionButtonClass} border-rose-200 bg-white text-rose-600 hover:bg-rose-50 dark:border-rose-900/60 dark:bg-slate-800 dark:text-rose-400 dark:hover:bg-rose-950/40`}
+                      className={`${actionButtonClass} border-rose-200 bg-white text-rose-600 hover:bg-rose-50 dark:border-rose-900/60 dark:bg-neutral-800 dark:text-rose-400 dark:hover:bg-rose-950/40`}
                     >
                       Delete
                     </button>

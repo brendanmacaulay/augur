@@ -16,10 +16,10 @@ export default function SummaryStrip({ risks, exposure = EXPOSURE.INHERENT }) {
           <div className={`text-3xl font-bold ${band.accentText}`}>
             {counts[band.name]}
           </div>
-          <div className="mt-1 text-sm font-semibold text-slate-700 dark:text-slate-200">
+          <div className="mt-1 text-sm font-semibold text-slate-700 dark:text-neutral-200">
             {band.name}
           </div>
-          <div className="text-xs text-slate-500 dark:text-slate-400">
+          <div className="text-xs text-slate-500 dark:text-neutral-400">
             Score {band.range}
           </div>
         </div>
