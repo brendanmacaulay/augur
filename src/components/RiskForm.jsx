@@ -1,9 +1,11 @@
 import { CATEGORIES, STATUSES, SCALE } from '../constants/risks'
 
-const labelClass = 'block text-sm font-medium text-slate-700 mb-1'
+const labelClass =
+  'block text-sm font-medium text-slate-700 mb-1 dark:text-slate-300'
 const fieldClass =
   'w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 ' +
-  'shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500'
+  'shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ' +
+  'dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100'
 
 export default function RiskForm({
   form,
@@ -129,7 +131,7 @@ export default function RiskForm({
       </div>
 
       {rationale && (
-        <p className="-mt-2 rounded-md bg-indigo-50 px-3 py-2 text-xs text-indigo-800">
+        <p className="-mt-2 rounded-md bg-indigo-50 px-3 py-2 text-xs text-indigo-800 dark:bg-indigo-950/40 dark:text-indigo-200">
           <span className="font-semibold">AI rationale:</span> {rationale}
         </p>
       )}
@@ -175,7 +177,7 @@ export default function RiskForm({
         </div>
       </div>
 
-      <p className="-mt-2 text-xs text-slate-500">
+      <p className="-mt-2 text-xs text-slate-500 dark:text-slate-400">
         Leave residual blank if no controls have been applied yet — residual then
         equals inherent.
       </p>
@@ -222,7 +224,7 @@ export default function RiskForm({
           <button
             type="button"
             onClick={onCancel}
-            className="inline-flex items-center rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+            className="inline-flex items-center rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
           >
             Cancel edit
           </button>

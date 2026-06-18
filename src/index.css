@@ -1,1 +1,24 @@
 @import "tailwindcss";
+
+/* Tailwind v4 dark mode: class-based, toggled on <html class="dark">. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  color-scheme: light;
+}
+
+.dark {
+  color-scheme: dark;
+}
+
+/* Paint the page background immediately (before React mounts) so the chosen
+   theme has no flash. Uses Tailwind v4's theme CSS variables. */
+body {
+  background-color: var(--color-slate-50);
+  color: var(--color-slate-900);
+}
+
+.dark body {
+  background-color: var(--color-slate-950);
+  color: var(--color-slate-100);
+}

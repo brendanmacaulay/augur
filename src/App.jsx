@@ -5,7 +5,16 @@ import RiskHeatMap from './components/RiskHeatMap'
 import SummaryStrip from './components/SummaryStrip'
 import ExposureToggle from './components/ExposureToggle'
 import DraftWithAI from './components/DraftWithAI'
-import { CATEGORIES, STATUSES, EXPOSURE, exposurePosition } from './constants/risks'
+import ThemeToggle from './components/ThemeToggle'
+import RegisterToolbar from './components/RegisterToolbar'
+import {
+  CATEGORIES,
+  STATUSES,
+  EXPOSURE,
+  exposurePosition,
+  exposureScore,
+  scoreBand,
+} from './constants/risks'
 import { listRisks, createRisk, updateRisk, deleteRisk } from './services/risks'
 
 const EMPTY_FORM = {
@@ -19,6 +28,13 @@ const EMPTY_FORM = {
   mitigation: '',
   owner: '',
   status: STATUSES[0],
+}
+
+const DEFAULT_REGISTER_FILTERS = {
+  category: 'All',
+  status: 'All',
+  band: 'All',
+  sort: 'newest',
 }
 
 // Convert empty residual selections to null and coerce numeric fields.
@@ -46,6 +62,7 @@ function App() {
   const [exposure, setExposure] = useState(EXPOSURE.INHERENT)
   const [selectedCell, setSelectedCell] = useState(null)
   const [aiRationale, setAiRationale] = useState('')
+  const [registerFilters, setRegisterFilters] = useState(DEFAULT_REGISTER_FILTERS)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
@@ -124,6 +141,10 @@ function App() {
     setSelectedCell(null)
   }
 
+  function handleFilterChange(key, value) {
+    setRegisterFilters((prev) => ({ ...prev, [key]: value }))
+  }
+
   async function handleSubmit(e) {
     e.preventDefault()
     setSaving(true)
@@ -179,30 +200,63 @@ function App() {
     }
   }
 
-  // The register reflects the active heat-map cell filter, if any, matching
-  // each risk by its position in the active exposure mode.
-  const visibleRisks = selectedCell
-    ? risks.filter((r) => {
-        const pos = exposurePosition(r, exposure)
-        return (
-          pos.likelihood === selectedCell.likelihood &&
-          pos.impact === selectedCell.impact
-        )
-      })
-    : risks
+  // The register reflects the heat-map cell filter plus the toolbar filters,
+  // all keyed to the active exposure for the severity dimension.
+  let visibleRisks = risks
+  if (selectedCell) {
+    visibleRisks = visibleRisks.filter((r) => {
+      const pos = exposurePosition(r, exposure)
+      return (
+        pos.likelihood === selectedCell.likelihood &&
+        pos.impact === selectedCell.impact
+      )
+    })
+  }
+  if (registerFilters.category !== 'All') {
+    visibleRisks = visibleRisks.filter((r) => r.category === registerFilters.category)
+  }
+  if (registerFilters.status !== 'All') {
+    visibleRisks = visibleRisks.filter((r) => r.status === registerFilters.status)
+  }
+  if (registerFilters.band !== 'All') {
+    visibleRisks = visibleRisks.filter(
+      (r) => scoreBand(exposureScore(r, exposure)).name === registerFilters.band
+    )
+  }
+  if (registerFilters.sort === 'severity-desc' || registerFilters.sort === 'severity-asc') {
+    const dir = registerFilters.sort === 'severity-desc' ? -1 : 1
+    visibleRisks = [...visibleRisks].sort(
+      (a, b) => dir * (exposureScore(a, exposure) - exposureScore(b, exposure))
+    )
+  }
+
+  const toolbarActive =
+    registerFilters.category !== 'All' ||
+    registerFilters.status !== 'All' ||
+    registerFilters.band !== 'All' ||
+    registerFilters.sort !== 'newest'
+  const narrowed = selectedCell != null || visibleRisks.length !== risks.length
+
+  const cardClass =
+    'rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900'
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900">
+    <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
       <div className="mx-auto max-w-5xl px-4 py-10">
-        <header className="mb-8">
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900">Augur</h1>
-          <p className="mt-1 text-sm text-slate-500">
-            AI-native enterprise risk register
-          </p>
+        <header className="mb-8 flex items-start justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
+              Augur
+            </h1>
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+              An AI-native enterprise risk register — surface, score, and track exposure.
+            </p>
+          </div>
+          <ThemeToggle />
         </header>
 
         {error && (
-          <div className="mb-6 rounded-md border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+          <div className="mb-6 rounded-md border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 dark:border-rose-900/60 dark:bg-rose-950/40 dark:text-rose-300">
             {error}
           </div>
         )}
@@ -211,11 +265,13 @@ function App() {
         <section className="mb-8 space-y-6">
           <SummaryStrip risks={risks} exposure={exposure} />
 
-          <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+          <div className={`${cardClass} p-6`}>
             <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
               <div>
-                <h2 className="text-lg font-semibold text-slate-900">Risk heat map</h2>
-                <p className="text-sm text-slate-500">
+                <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+                  Risk heat map
+                </h2>
+                <p className="text-sm text-slate-500 dark:text-slate-400">
                   {exposure} exposure · likelihood × impact
                 </p>
               </div>
@@ -231,9 +287,9 @@ function App() {
         </section>
 
         {/* Add / edit form */}
-        <section className="mb-8 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+        <section className={`mb-8 ${cardClass} p-6`}>
           <DraftWithAI onDraft={handleDraft} />
-          <h2 className="mb-4 text-lg font-semibold text-slate-900">
+          <h2 className="mb-4 text-lg font-semibold text-slate-900 dark:text-slate-100">
             {editingId ? 'Edit risk' : 'Add a risk'}
           </h2>
           <RiskForm
@@ -248,17 +304,31 @@ function App() {
         </section>
 
         {/* Register */}
-        <section className="rounded-xl border border-slate-200 bg-white shadow-sm">
-          <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
-            <h2 className="text-lg font-semibold text-slate-900">Risk register</h2>
-            <span className="text-sm text-slate-500">
-              {risks.length} {risks.length === 1 ? 'risk' : 'risks'}
+        <section className={cardClass}>
+          <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4 dark:border-slate-800">
+            <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+              Risk register
+            </h2>
+            <span className="text-sm text-slate-500 dark:text-slate-400">
+              {narrowed
+                ? `${visibleRisks.length} of ${risks.length}`
+                : `${risks.length} ${risks.length === 1 ? 'risk' : 'risks'}`}
             </span>
           </div>
 
+          <RegisterToolbar
+            category={registerFilters.category}
+            status={registerFilters.status}
+            band={registerFilters.band}
+            sort={registerFilters.sort}
+            onChange={handleFilterChange}
+            onReset={() => setRegisterFilters(DEFAULT_REGISTER_FILTERS)}
+            filtersActive={toolbarActive}
+          />
+
           {selectedCell && (
-            <div className="flex items-center justify-between gap-3 border-b border-slate-200 bg-indigo-50 px-6 py-3 text-sm">
-              <span className="text-slate-700">
+            <div className="flex items-center justify-between gap-3 border-b border-slate-200 bg-indigo-50 px-6 py-3 text-sm dark:border-slate-800 dark:bg-indigo-950/40">
+              <span className="text-slate-700 dark:text-slate-300">
                 Showing <span className="font-semibold">{visibleRisks.length}</span>{' '}
                 {visibleRisks.length === 1 ? 'risk' : 'risks'} at Likelihood{' '}
                 <span className="font-semibold">{selectedCell.likelihood}</span> ×
@@ -268,7 +338,7 @@ function App() {
               <button
                 type="button"
                 onClick={() => setSelectedCell(null)}
-                className="shrink-0 rounded-md border border-slate-300 bg-white px-3 py-1 text-xs font-medium text-slate-700 hover:bg-slate-50"
+                className="shrink-0 rounded-md border border-slate-300 bg-white px-3 py-1 text-xs font-medium text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
               >
                 Clear
               </button>
@@ -282,8 +352,8 @@ function App() {
             onEdit={handleEdit}
             onDelete={handleDelete}
             emptyMessage={
-              selectedCell
-                ? 'No risks in this cell.'
+              selectedCell || toolbarActive
+                ? 'No risks match the current filters.'
                 : 'No risks yet. Add your first one above.'
             }
           />

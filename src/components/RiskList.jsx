@@ -19,6 +19,41 @@ function ScoreBadge({ score }) {
   )
 }
 
+// Shows how exposure changed from inherent to residual after controls.
+function ExposureDelta({ inherent, residual }) {
+  const delta = residual - inherent
+  if (delta === 0) {
+    return (
+      <span
+        className="text-[11px] text-slate-400 dark:text-slate-500"
+        title="Residual equals inherent — no control effect"
+      >
+        no change
+      </span>
+    )
+  }
+  const dropped = delta < 0
+  return (
+    <span
+      className={`inline-flex items-center gap-0.5 text-[11px] font-semibold ${
+        dropped
+          ? 'text-emerald-600 dark:text-emerald-400'
+          : 'text-rose-600 dark:text-rose-400'
+      }`}
+      title={
+        dropped
+          ? `Exposure dropped ${Math.abs(delta)} after controls`
+          : `Exposure rose ${delta} versus inherent`
+      }
+    >
+      {dropped ? '▼' : '▲'} {Math.abs(delta)}
+    </span>
+  )
+}
+
+const actionButtonClass =
+  'rounded-md border px-2.5 py-1 text-xs font-medium transition'
+
 export default function RiskList({
   risks,
   loading,
@@ -29,7 +64,7 @@ export default function RiskList({
 }) {
   if (loading) {
     return (
-      <p className="px-6 py-10 text-center text-sm text-slate-500">
+      <p className="px-6 py-10 text-center text-sm text-slate-500 dark:text-slate-400">
         Loading risks…
       </p>
     )
@@ -37,7 +72,7 @@ export default function RiskList({
 
   if (risks.length === 0) {
     return (
-      <p className="px-6 py-10 text-center text-sm text-slate-500">
+      <p className="px-6 py-10 text-center text-sm text-slate-500 dark:text-slate-400">
         {emptyMessage}
       </p>
     )
@@ -45,9 +80,9 @@ export default function RiskList({
 
   return (
     <div className="overflow-x-auto">
-      <table className="min-w-full divide-y divide-slate-200 text-sm">
+      <table className="min-w-full divide-y divide-slate-200 text-sm dark:divide-slate-800">
         <thead>
-          <tr className="text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+          <tr className="bg-slate-50 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 dark:bg-slate-800/50 dark:text-slate-400">
             <th className="px-4 py-3">Risk</th>
             <th className="px-4 py-3">Category</th>
             <th className="px-4 py-3 text-center">L</th>
@@ -58,7 +93,7 @@ export default function RiskList({
             <th className="px-4 py-3 text-right">Actions</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-100">
+        <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
           {risks.map((risk) => {
             const inherent = inherentScore(risk.likelihood, risk.impact)
             const residual = exposureScore(risk, EXPOSURE.RESIDUAL)
@@ -66,26 +101,39 @@ export default function RiskList({
             return (
               <tr
                 key={risk.id}
-                className={isEditing ? 'bg-indigo-50' : 'hover:bg-slate-50'}
+                className={
+                  isEditing
+                    ? 'bg-indigo-50 dark:bg-indigo-950/40'
+                    : 'hover:bg-slate-50 dark:hover:bg-slate-800/50'
+                }
               >
                 <td className="px-4 py-3">
-                  <div className="font-medium text-slate-900">{risk.title}</div>
+                  <div className="font-medium text-slate-900 dark:text-slate-100">
+                    {risk.title}
+                  </div>
                   {risk.owner && (
-                    <div className="text-xs text-slate-500">Owner: {risk.owner}</div>
+                    <div className="text-xs text-slate-500 dark:text-slate-400">
+                      Owner: {risk.owner}
+                    </div>
                   )}
                 </td>
-                <td className="px-4 py-3 text-slate-700">{risk.category}</td>
-                <td className="px-4 py-3 text-center text-slate-700">
+                <td className="px-4 py-3 text-slate-700 dark:text-slate-300">
+                  {risk.category}
+                </td>
+                <td className="px-4 py-3 text-center text-slate-700 dark:text-slate-300">
                   {risk.likelihood}
                 </td>
-                <td className="px-4 py-3 text-center text-slate-700">
+                <td className="px-4 py-3 text-center text-slate-700 dark:text-slate-300">
                   {risk.impact}
                 </td>
                 <td className="px-4 py-3 text-center">
                   <ScoreBadge score={inherent} />
                 </td>
                 <td className="px-4 py-3 text-center">
-                  <ScoreBadge score={residual} />
+                  <div className="flex flex-col items-center gap-1">
+                    <ScoreBadge score={residual} />
+                    <ExposureDelta inherent={inherent} residual={residual} />
+                  </div>
                 </td>
                 <td className="px-4 py-3">
                   <span
@@ -100,13 +148,13 @@ export default function RiskList({
                   <div className="flex justify-end gap-2">
                     <button
                       onClick={() => onEdit(risk)}
-                      className="rounded-md border border-slate-300 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 hover:bg-slate-50"
+                      className={`${actionButtonClass} border-slate-300 bg-white text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700`}
                     >
                       Edit
                     </button>
                     <button
                       onClick={() => onDelete(risk)}
-                      className="rounded-md border border-rose-200 bg-white px-2.5 py-1 text-xs font-medium text-rose-600 hover:bg-rose-50"
+                      className={`${actionButtonClass} border-rose-200 bg-white text-rose-600 hover:bg-rose-50 dark:border-rose-900/60 dark:bg-slate-800 dark:text-rose-400 dark:hover:bg-rose-950/40`}
                     >
                       Delete
                     </button>
