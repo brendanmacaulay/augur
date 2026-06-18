@@ -9,6 +9,7 @@ export default function RiskForm({
   form,
   editingId,
   saving,
+  rationale,
   onChange,
   onSubmit,
   onCancel,
@@ -126,6 +127,12 @@ export default function RiskForm({
           </select>
         </div>
       </div>
+
+      {rationale && (
+        <p className="-mt-2 rounded-md bg-indigo-50 px-3 py-2 text-xs text-indigo-800">
+          <span className="font-semibold">AI rationale:</span> {rationale}
+        </p>
+      )}
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div>

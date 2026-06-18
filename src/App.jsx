@@ -4,6 +4,7 @@ import RiskList from './components/RiskList'
 import RiskHeatMap from './components/RiskHeatMap'
 import SummaryStrip from './components/SummaryStrip'
 import ExposureToggle from './components/ExposureToggle'
+import DraftWithAI from './components/DraftWithAI'
 import { CATEGORIES, STATUSES, EXPOSURE, exposurePosition } from './constants/risks'
 import { listRisks, createRisk, updateRisk, deleteRisk } from './services/risks'
 
@@ -44,6 +45,7 @@ function App() {
   const [editingId, setEditingId] = useState(null)
   const [exposure, setExposure] = useState(EXPOSURE.INHERENT)
   const [selectedCell, setSelectedCell] = useState(null)
+  const [aiRationale, setAiRationale] = useState('')
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
@@ -83,10 +85,28 @@ function App() {
   function resetForm() {
     setForm(EMPTY_FORM)
     setEditingId(null)
+    setAiRationale('')
   }
 
   function handleChange(name, value) {
     setForm((prev) => ({ ...prev, [name]: value }))
+  }
+
+  // Prefill the form from an AI draft as a new (create-flow) risk. Residual
+  // fields are left blank for the user to set after reviewing the controls.
+  function handleDraft(draft) {
+    setEditingId(null)
+    setForm({
+      ...EMPTY_FORM,
+      title: draft.title ?? '',
+      description: draft.description ?? '',
+      category: CATEGORIES.includes(draft.category) ? draft.category : EMPTY_FORM.category,
+      likelihood: draft.likelihood ?? EMPTY_FORM.likelihood,
+      impact: draft.impact ?? EMPTY_FORM.impact,
+      mitigation: Array.isArray(draft.mitigations) ? draft.mitigations.join('\n') : '',
+    })
+    setAiRationale(draft.rationale ?? '')
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   // Toggle the heat-map cell filter; clicking the active cell clears it.
@@ -129,6 +149,7 @@ function App() {
 
   function handleEdit(risk) {
     setEditingId(risk.id)
+    setAiRationale('')
     setForm({
       title: risk.title ?? '',
       description: risk.description ?? '',
@@ -211,6 +232,7 @@ function App() {
 
         {/* Add / edit form */}
         <section className="mb-8 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+          <DraftWithAI onDraft={handleDraft} />
           <h2 className="mb-4 text-lg font-semibold text-slate-900">
             {editingId ? 'Edit risk' : 'Add a risk'}
           </h2>
@@ -218,6 +240,7 @@ function App() {
             form={form}
             editingId={editingId}
             saving={saving}
+            rationale={aiRationale}
             onChange={handleChange}
             onSubmit={handleSubmit}
             onCancel={resetForm}
