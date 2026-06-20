@@ -60,6 +60,7 @@ export default function RiskList({
   editingId,
   onEdit,
   onDelete,
+  canManage = false,
   emptyMessage = 'No risks yet. Add your first one above.',
 }) {
   if (loading) {
@@ -90,7 +91,7 @@ export default function RiskList({
             <th className="px-4 py-3 text-center">Inherent</th>
             <th className="px-4 py-3 text-center">Residual</th>
             <th className="px-4 py-3">Status</th>
-            <th className="px-4 py-3 text-right">Actions</th>
+            {canManage && <th className="px-4 py-3 text-right">Actions</th>}
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-100 dark:divide-neutral-800">
@@ -144,22 +145,24 @@ export default function RiskList({
                     {risk.status}
                   </span>
                 </td>
-                <td className="px-4 py-3">
-                  <div className="flex justify-end gap-2">
-                    <button
-                      onClick={() => onEdit(risk)}
-                      className={`${actionButtonClass} border-slate-300 bg-white text-slate-700 hover:bg-slate-50 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700`}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => onDelete(risk)}
-                      className={`${actionButtonClass} border-rose-200 bg-white text-rose-600 hover:bg-rose-50 dark:border-rose-900/60 dark:bg-neutral-800 dark:text-rose-400 dark:hover:bg-rose-950/40`}
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </td>
+                {canManage && (
+                  <td className="px-4 py-3">
+                    <div className="flex justify-end gap-2">
+                      <button
+                        onClick={() => onEdit(risk)}
+                        className={`${actionButtonClass} border-slate-300 bg-white text-slate-700 hover:bg-slate-50 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700`}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => onDelete(risk)}
+                        className={`${actionButtonClass} border-rose-200 bg-white text-rose-600 hover:bg-rose-50 dark:border-rose-900/60 dark:bg-neutral-800 dark:text-rose-400 dark:hover:bg-rose-950/40`}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </td>
+                )}
               </tr>
             )
           })}

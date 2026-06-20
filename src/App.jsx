@@ -7,6 +7,8 @@ import ExposureToggle from './components/ExposureToggle'
 import DraftWithAI from './components/DraftWithAI'
 import ThemeToggle from './components/ThemeToggle'
 import RegisterToolbar from './components/RegisterToolbar'
+import AuthControls from './components/AuthControls'
+import { useAuth } from './hooks/useAuth'
 import {
   CATEGORIES,
   STATUSES,
@@ -56,6 +58,8 @@ function toPayload(form) {
 }
 
 function App() {
+  const { user } = useAuth()
+  const isAdmin = Boolean(user)
   const [risks, setRisks] = useState([])
   const [form, setForm] = useState(EMPTY_FORM)
   const [editingId, setEditingId] = useState(null)
@@ -252,7 +256,10 @@ function App() {
               An AI-native enterprise risk register — surface, score, and track exposure.
             </p>
           </div>
-          <ThemeToggle />
+          <div className="flex items-center gap-3">
+            <AuthControls user={user} />
+            <ThemeToggle />
+          </div>
         </header>
 
         {error && (
@@ -286,22 +293,24 @@ function App() {
           </div>
         </section>
 
-        {/* Add / edit form */}
-        <section className={`mb-8 ${cardClass} p-6`}>
-          <DraftWithAI onDraft={handleDraft} />
-          <h2 className="mb-4 text-lg font-semibold text-slate-900 dark:text-neutral-100">
-            {editingId ? 'Edit risk' : 'Add a risk'}
-          </h2>
-          <RiskForm
-            form={form}
-            editingId={editingId}
-            saving={saving}
-            rationale={aiRationale}
-            onChange={handleChange}
-            onSubmit={handleSubmit}
-            onCancel={resetForm}
-          />
-        </section>
+        {/* Add / edit form — admin only */}
+        {isAdmin && (
+          <section className={`mb-8 ${cardClass} p-6`}>
+            <DraftWithAI onDraft={handleDraft} />
+            <h2 className="mb-4 text-lg font-semibold text-slate-900 dark:text-neutral-100">
+              {editingId ? 'Edit risk' : 'Add a risk'}
+            </h2>
+            <RiskForm
+              form={form}
+              editingId={editingId}
+              saving={saving}
+              rationale={aiRationale}
+              onChange={handleChange}
+              onSubmit={handleSubmit}
+              onCancel={resetForm}
+            />
+          </section>
+        )}
 
         {/* Register */}
         <section className={cardClass}>
@@ -351,10 +360,13 @@ function App() {
             editingId={editingId}
             onEdit={handleEdit}
             onDelete={handleDelete}
+            canManage={isAdmin}
             emptyMessage={
               selectedCell || toolbarActive
                 ? 'No risks match the current filters.'
-                : 'No risks yet. Add your first one above.'
+                : isAdmin
+                  ? 'No risks yet. Add your first one above.'
+                  : 'No risks have been added yet.'
             }
           />
         </section>
