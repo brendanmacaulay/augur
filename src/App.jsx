@@ -8,6 +8,7 @@ import DraftWithAI from './components/DraftWithAI'
 import ThemeToggle from './components/ThemeToggle'
 import RegisterToolbar from './components/RegisterToolbar'
 import AuthControls from './components/AuthControls'
+import VisitorBanner from './components/VisitorBanner'
 import { useAuth } from './hooks/useAuth'
 import {
   CATEGORIES,
@@ -292,6 +293,9 @@ function App() {
             />
           </div>
         </section>
+
+        {/* Read-only context for visitors, between dashboard and register */}
+        {!isAdmin && <VisitorBanner />}
 
         {/* Add / edit form — admin only */}
         {isAdmin && (
